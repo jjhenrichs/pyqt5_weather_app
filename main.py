@@ -59,7 +59,11 @@ class WeatherApp(QMainWindow):
         """)
 
         # Functionality
+        self.submit_btn.clicked.connect(self.submit)
         self.clear_btn.clicked.connect(self.clear)
+
+    def submit(self):
+        print("Data submitted")
 
     # Clear data
     def clear(self):
