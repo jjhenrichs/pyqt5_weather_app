@@ -74,6 +74,18 @@ class WeatherApp(QMainWindow):
             self.msg_box_label.setText("Need the city name")
         else:
             self.msg_box_label.setText("")
+            if self.country != "US" or self.state == "":
+                self.url = f"https://api.openweathermap.org/data/2.5/weather?q={self.city},{self.country}&appid={secret.api_key}"
+            else:
+                self.url = f"https://api.openweathermap.org/data/2.5/weather?q={self.city},{self.state},{self.country}&appid={secret.api_key}"
+           
+            response = requests.get(self.url)
+
+            if response.status_code == 200:
+                self.data = response.json()
+                print(self.data)
+            else:
+                self.msg_box_label(f"Failed to retrieve data {response.status_code}")
             
 
     # Clear data
