@@ -1,4 +1,4 @@
-import sys, requests
+import sys, requests, secret.keys as secret
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QPushButton
 from PyQt5.QtCore import Qt
 
@@ -10,7 +10,7 @@ class WeatherApp(QMainWindow):
         self.initUI()
 
     def initUI(self):
-        pass
+        print(secret.api_key)
 
 # This program will run only if main.py is called
 if __name__ == "__main__":
