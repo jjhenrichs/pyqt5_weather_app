@@ -47,7 +47,16 @@ class WeatherApp(QMainWindow):
         self.initUI()
 
     def initUI(self):
-        print(secret.api_key)
+        self.setStyleSheet("""
+            QLineEdit {
+                font-size: 20px;               
+            }
+                           
+            QPushButton {
+                font-size: 20px;               
+            }
+                           
+        """)
 
 # This program will run only if main.py is called
 if __name__ == "__main__":
