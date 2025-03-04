@@ -63,7 +63,18 @@ class WeatherApp(QMainWindow):
         self.clear_btn.clicked.connect(self.clear)
 
     def submit(self):
-        print("Data submitted")
+        self.city = self.city_label.text()
+        self.state = self.state_label.text()
+        self.country = self.country_label.text()
+        if self.city == "" and self.country == "":
+            self.msg_box_label.setText("We need more info")
+        elif self.country == "":
+            self.msg_box_label.setText("Need the country code")
+        elif self.city == "":
+            self.msg_box_label.setText("Need the city name")
+        else:
+            self.msg_box_label.setText("")
+            
 
     # Clear data
     def clear(self):
