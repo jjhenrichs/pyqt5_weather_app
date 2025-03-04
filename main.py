@@ -58,6 +58,21 @@ class WeatherApp(QMainWindow):
                            
         """)
 
+        # Functionality
+        self.clear_btn.clicked.connect(self.clear)
+
+    # Clear data
+    def clear(self):
+        self.city_label.clear()
+        self.state_label.clear()
+        self.country_label.clear()
+        self.msg_box_label.clear()
+        self.data = ""
+        self.url = ""
+        self.country = ""
+        self.state = ""
+        self.city = ""
+
 # This program will run only if main.py is called
 if __name__ == "__main__":
     app = QApplication(sys.argv)
