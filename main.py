@@ -16,17 +16,17 @@ class WeatherApp(QMainWindow):
         self.data = ""
 
         # Textboxes
-        # self.city_label = QLineEdit(self)
-        # self.city_label.setGeometry(10, 10, 480, 40)
-        # self.city_label.setPlaceholderText("Enter City Name")
+        self.city_label = QLineEdit(self)
+        self.city_label.setGeometry(10, 10, 480, 40)
+        self.city_label.setPlaceholderText("Enter City Name")
 
-        # self.state_label = QLineEdit(self)
-        # self.state_label.setGeometry(10, 60, 480, 40)
-        # self.state_label.setPlaceholderText("Enter State Code (if Country is US)")
+        self.state_label = QLineEdit(self)
+        self.state_label.setGeometry(10, 60, 480, 40)
+        self.state_label.setPlaceholderText("Enter State Code (if Country is US)")
 
-        # self.country_label = QLineEdit(self)
-        # self.country_label.setGeometry(10, 110, 480, 40)
-        # self.country_label.setPlaceholderText("Enter Country Code")
+        self.country_label = QLineEdit(self)
+        self.country_label.setGeometry(10, 110, 480, 40)
+        self.country_label.setPlaceholderText("Enter Country Code")
 
         # Labels
         # self.msg_box_label = QLabel("", self)
@@ -74,17 +74,17 @@ class WeatherApp(QMainWindow):
         weather_layout = QGridLayout()
         button_layout = QHBoxLayout()
 
-        label1 = QLabel('#1', self)
-        label2 = QLabel('#2', self)
-        label3 = QLabel('#3', self)
+        # label1 = QLabel('#1', self)
+        # label2 = QLabel('#2', self)
+        # label3 = QLabel('#3', self)
         label4 = QLabel('#4', self)
         label5 = QLabel('#5', self)
         label6 = QLabel('#6', self)
 
 
-        label1.setStyleSheet("background-color: red;")
-        label2.setStyleSheet("background-color: orange;")
-        label3.setStyleSheet("background-color: yellow;")
+        # label1.setStyleSheet("background-color: red;")
+        # label2.setStyleSheet("background-color: orange;")
+        # label3.setStyleSheet("background-color: yellow;")
         label4.setStyleSheet("background-color: green;")
         label5.setStyleSheet("background-color: blue;")
         label6.setStyleSheet("background-color: purple;")
@@ -93,9 +93,9 @@ class WeatherApp(QMainWindow):
         general_layout.addLayout(weather_layout)
         general_layout.addLayout(button_layout)
 
-        textbox_layout.addWidget(label1)
-        textbox_layout.addWidget(label2)
-        textbox_layout.addWidget(label3)
+        textbox_layout.addWidget(self.city_label)
+        textbox_layout.addWidget(self.state_label)
+        textbox_layout.addWidget(self.country_label)
 
         weather_layout.addWidget(label4)
 
@@ -103,8 +103,6 @@ class WeatherApp(QMainWindow):
         button_layout.addWidget(label6)
 
         central_widget.setLayout(general_layout)
-
-
 
         # Functionality
         # self.submit_btn.clicked.connect(self.submit)
