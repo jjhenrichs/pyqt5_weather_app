@@ -150,9 +150,9 @@ class WeatherApp(QMainWindow):
         else:
             self.msg_box_label.setText("")
             if state == "":
-                url = f"https://api.openweathermap.org/data/2.5/weather?q={city},{country}&appid={secret.api_key}"
+                url = f"https://api.openweathermap.org/data/2.5/weather?q={city},{country}&appid={secret.api_key}&units=imperial"
             else:
-                url = f"https://api.openweathermap.org/data/2.5/weather?q={city},{state},{country}&appid={secret.api_key}"
+                url = f"https://api.openweathermap.org/data/2.5/weather?q={city},{state},{country}&appid={secret.api_key}&units=imperial"
            
             self.get_data(url)
 
@@ -198,15 +198,27 @@ class WeatherApp(QMainWindow):
 
     def display_data(self, data): 
         desc = data["weather"][0]["description"].capitalize()
-        temp = f"{int((data["main"]["temp"] * 9/5) - 459.67)}° F"
-        temp_feel = f"Feels like {int((data["main"]["feels_like"] * 9/5) - 459.67)}° F"
+        temp = f"{int(data["main"]["temp"])}° F"
+        temp_feel = f"Feels like {int(data["main"]["feels_like"])}° F"
         humidity = f"Humidity:\n{data["main"]["humidity"]}%"
+        wind_speed = data["wind"]["speed"]
+        wind_degree = self.calc_wind_direction(data["wind"]["deg"]) 
+        sunrise = data["sys"]["sunrise"]
+        sunset = data["sys"]["sunset"]
 
-        print(temp)
+        
         self.temp_label.setText(temp)
         self.feels_like_label.setText(temp_feel)
         self.desc_label.setText(desc)
         self.humid_label.setText(humidity)
+        self.wind_label.setText(f"Wind:\n{wind_speed} MPH\n from {wind_degree}")
+
+    def calc_wind_direction(self, wind_deg):
+        directions = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE",
+                     "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW", "N"]
+        
+        index = round(wind_deg / 22.5) % 16  # 16 segments of (360 / 16) 22.5° each
+        return directions[index]
 
     def display_error(self, message):
         self.msg_box_label.setText(message)
