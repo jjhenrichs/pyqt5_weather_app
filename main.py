@@ -9,13 +9,6 @@ class WeatherApp(QMainWindow):
         self.setWindowTitle("Weather App")
         self.setGeometry(700, 200, 500, 600)
 
-        # variables
-        self.city = ""
-        self.state = ""
-        self.country = ""
-        self.url = ""
-        self.data = ""
-
         # Textboxes
         self.city_label = QLineEdit(self)
         self.city_label.setPlaceholderText("Enter City Name")
@@ -30,12 +23,36 @@ class WeatherApp(QMainWindow):
         self.msg_box_label = QLabel("", self)
         self.msg_box_label.setAlignment(Qt.AlignCenter)
         self.msg_box_label.setObjectName("msg_box")
-        self.msg_box_label.setFixedHeight(40) # Adjest the message_box label to a height of 40px
+        self.msg_box_label.setFixedHeight(40) # Adjust the message box label to a height of 40px
         self.msg_box_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed) # makes label resizable in width while keeping the height fixed
-        
-        self.weather_label = QLabel("Weather goes here", self)
-        self.weather_label.setAlignment(Qt.AlignCenter)
-        self.weather_label.setObjectName("weather_label")
+
+        # Weather labels
+        self.temp_label = QLabel("Temp", self)
+        self.temp_label.setAlignment(Qt.AlignCenter)
+
+        self.feels_like_label = QLabel("Temp Feel", self)
+        self.feels_like_label.setAlignment(Qt.AlignCenter)
+
+        self.desc_label = QLabel("Description", self) # Temp Description
+        self.desc_label.setAlignment(Qt.AlignCenter)
+
+
+        self.wind_label = QLabel("Wind", self)
+        self.wind_label.setAlignment(Qt.AlignCenter)
+
+
+        self.w_icon_label = QLabel("WEather Icon", self)
+        self.w_icon_label.setAlignment(Qt.AlignCenter)
+
+        self.sunrise_label = QLabel("Sunrise", self)
+        self.sunrise_label.setAlignment(Qt.AlignCenter)
+
+        self.sunset_label = QLabel("Sunset", self)
+        self.sunset_label.setAlignment(Qt.AlignCenter)
+
+
+        self.humid_label = QLabel("Humdity", self)
+        self.humid_label.setAlignment(Qt.AlignCenter)
 
         # Buttons
         self.submit_btn = QPushButton("Submit", self)
@@ -57,17 +74,20 @@ class WeatherApp(QMainWindow):
             QPushButton {
                 font-size: 20px;               
             }
+                           
+            QLabel {
+                border: 1px solid black;          
+            }
+                           
             #msg_box {
                 color: red;
                 font-weight: 800;
                 font-size: 20px;
                 text-align: center; 
-                height: 40px;       
             } 
             #weather_label {
                 border: 2px solid black;
                 font-size: 20px;
-                height: 500px;
             }            
         """)
 
@@ -90,8 +110,16 @@ class WeatherApp(QMainWindow):
         textbox_layout.addWidget(self.country_label)
         textbox_layout.addWidget(self.msg_box_label)
 
-        weather_layout.addWidget(self.weather_label, 0, 0)
+        # Weather Layout
+        weather_layout.addWidget(self.temp_label, 0, 0)
+        weather_layout.addWidget(self.desc_label, 0, 1, 1, 2)
+        weather_layout.addWidget(self.humid_label, 0,3)
 
+        weather_layout.addWidget(self.w_icon_label, 1, 1, 2, 2)
+        weather_layout.addWidget(self.sun_label, 2, 0)
+        weather_layout.addWidget(self.wind_label, 2, 3)
+
+        # Button Layout
         button_layout.addWidget(self.submit_btn)
         button_layout.addWidget(self.clear_btn)
 
@@ -102,29 +130,78 @@ class WeatherApp(QMainWindow):
         self.clear_btn.clicked.connect(self.clear)
 
     def submit(self):
-        self.city = self.city_label.text()
-        self.state = self.state_label.text()
-        self.country = self.country_label.text()
-        if self.city == "" and self.country == "":
-            self.msg_box_label.setText("We need more info")
-        elif self.country == "":
+        city = self.city_label.text()
+        state = self.state_label.text()
+        country = self.country_label.text()
+        if city == "" and country == "":
+            self.msg_box_label.setText("We need the city name and the country code")
+        elif country == "":
             self.msg_box_label.setText("Need the country code")
-        elif self.city == "":
+        elif city == "":
             self.msg_box_label.setText("Need the city name")
         else:
             self.msg_box_label.setText("")
-            if self.country != "US" or self.state == "":
-                self.url = f"https://api.openweathermap.org/data/2.5/weather?q={self.city},{self.country}&appid={secret.api_key}"
+            if state == "":
+                url = f"https://api.openweathermap.org/data/2.5/weather?q={city},{country}&appid={secret.api_key}"
             else:
-                self.url = f"https://api.openweathermap.org/data/2.5/weather?q={self.city},{self.state},{self.country}&appid={secret.api_key}"
+                url = f"https://api.openweathermap.org/data/2.5/weather?q={city},{state},{country}&appid={secret.api_key}"
            
-            response = requests.get(self.url)
+            self.get_data(url)
+
+    def get_data(self, url):
+        
+        try:
+            response = requests.get(url)
+            response.raise_for_status() # Needed in order to raise HTTPError (HTTPError is part of requests)
+            data = response.json()
 
             if response.status_code == 200:
-                self.data = response.json()
-                print(self.data)
-            else:
-                self.msg_box_label(f"Failed to retrieve data {response.status_code}")  
+                print(data)
+                self.display_data(data)
+
+        except requests.exceptions.HTTPError as http_error: # when status codes 400 - 599 are raised
+            match response.status_code:
+                case 400:
+                    self.display_error("Bad request\nPlease check your input")
+                case 401:
+                    self.display_error("Unauthorized\nInvalid API key")
+                case 403:
+                    self.display_error("Forbidden\nAccess is denied")
+                case 404:
+                    self.display_error("Not Found\nCity, state, or country is not found")
+                case 500:
+                    self.display_error("Internal Server Error\nPlease try again later")
+                case 502:
+                    self.display_error("Bad Gateway\nInvalid response from the server")
+                case 503:
+                    self.display_error("Service Unavailable\nServer is down")
+                case 504:
+                    self.display_error("Gateway Timeout\nNo response from the server")
+                case _:
+                    self.display_error("HTTP Error occurred\n{http_error}")
+        except requests.exceptions.ConnectionError: # raised due to network errors, invalid URLS, etc
+            self.display_error("Connection Error:\nCheck your Internet connection")
+        except requests.exceptions.Timeout:
+            self.display_error("Timeout Error:\nThe request timed out")
+        except requests.exceptions.TooManyRedirects:
+            self.display_error("Too many Redirects:\nCheck URL")
+        except requests.exceptions.RequestException as req_error: 
+            self.display_error(f"Request Error:\n{req_error}")
+
+    def display_data(self, data):
+        desc = data["weather"][0]["description"].capitalize()
+        temp = data["main"]["temp"] - 273.15
+        temp_feel = (data["main"]["feels_like"] * 9/5) - 459.67
+        humidity = f"{data["main"]["humidity"]}%"
+        
+        # °F
+        
+        print(temp)
+        self.desc_label.setText(desc)
+        self.humid_label.setText(humidity)
+
+    def display_error(self, message):
+        self.msg_box_label.setText(message)
 
     # Clear data
     def clear(self):
