@@ -100,6 +100,14 @@ class WeatherApp(QMainWindow):
         textbox_layout = QVBoxLayout()
         weather_layout = QGridLayout()
         button_layout = QHBoxLayout()
+        temp_layout = QVBoxLayout()
+        sun_layout = QVBoxLayout()
+
+        temp_layout.addWidget(self.temp_label)
+        temp_layout.addWidget(self.feels_like_label)
+
+        sun_layout.addWidget(self.sunrise_label)
+        sun_layout.addWidget(self.sunset_label)
 
         general_layout.addLayout(textbox_layout)
         general_layout.addLayout(weather_layout)
@@ -111,12 +119,12 @@ class WeatherApp(QMainWindow):
         textbox_layout.addWidget(self.msg_box_label)
 
         # Weather Layout
-        weather_layout.addWidget(self.temp_label, 0, 0)
+        weather_layout.addLayout(temp_layout, 0, 0)
         weather_layout.addWidget(self.desc_label, 0, 1, 1, 2)
         weather_layout.addWidget(self.humid_label, 0,3)
 
         weather_layout.addWidget(self.w_icon_label, 1, 1, 2, 2)
-        weather_layout.addWidget(self.sun_label, 2, 0)
+        weather_layout.addLayout(sun_layout, 2, 0)
         weather_layout.addWidget(self.wind_label, 2, 3)
 
         # Button Layout
@@ -188,15 +196,15 @@ class WeatherApp(QMainWindow):
         except requests.exceptions.RequestException as req_error: 
             self.display_error(f"Request Error:\n{req_error}")
 
-    def display_data(self, data):
+    def display_data(self, data): 
         desc = data["weather"][0]["description"].capitalize()
-        temp = data["main"]["temp"] - 273.15
-        temp_feel = (data["main"]["feels_like"] * 9/5) - 459.67
-        humidity = f"{data["main"]["humidity"]}%"
-        
-        # °F
-        
+        temp = f"{int((data["main"]["temp"] * 9/5) - 459.67)}° F"
+        temp_feel = f"Feels like {int((data["main"]["feels_like"] * 9/5) - 459.67)}° F"
+        humidity = f"Humidity:\n{data["main"]["humidity"]}%"
+
         print(temp)
+        self.temp_label.setText(temp)
+        self.feels_like_label.setText(temp_feel)
         self.desc_label.setText(desc)
         self.humid_label.setText(humidity)
 
