@@ -1,4 +1,5 @@
 import sys, requests, secret.keys as secret
+from datetime import datetime
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QPushButton, QWidget, QVBoxLayout, QHBoxLayout, QGridLayout,QSizePolicy
 from PyQt5.QtCore import Qt
 
@@ -73,10 +74,6 @@ class WeatherApp(QMainWindow):
                            
             QPushButton {
                 font-size: 20px;               
-            }
-                           
-            QLabel {
-                border: 1px solid black;          
             }
                            
             #msg_box {
@@ -203,8 +200,8 @@ class WeatherApp(QMainWindow):
         humidity = f"Humidity:\n{data["main"]["humidity"]}%"
         wind_speed = data["wind"]["speed"]
         wind_degree = self.calc_wind_direction(data["wind"]["deg"]) 
-        sunrise = data["sys"]["sunrise"]
-        sunset = data["sys"]["sunset"]
+        sunrise = self.convert_to_utc(data["sys"]["sunrise"])
+        sunset = self.convert_to_utc(data["sys"]["sunset"])
 
         
         self.temp_label.setText(temp)
@@ -212,6 +209,12 @@ class WeatherApp(QMainWindow):
         self.desc_label.setText(desc)
         self.humid_label.setText(humidity)
         self.wind_label.setText(f"Wind:\n{wind_speed} MPH\n from {wind_degree}")
+        self.sunrise_label.setText(f"Sunrise:\n{sunrise}")
+        self.sunset_label.setText(f"Sunset:\n{sunset}")
+
+    # Converts UNIX timestaps to UTC directly
+    def convert_to_utc(self, timestamp):
+        return datetime.fromtimestamp(timestamp).strftime("%I:%M %p") # %I -> 12 hr format, %p -> AM/PM indicator
 
     def calc_wind_direction(self, wind_deg):
         directions = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE",
