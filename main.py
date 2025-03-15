@@ -21,38 +21,38 @@ class WeatherApp(QMainWindow):
         self.country_label.setPlaceholderText("Enter Country Code")
 
         # Labels
-        self.msg_box_label = QLabel("", self)
+        self.msg_box_label = QLabel(self)
         self.msg_box_label.setAlignment(Qt.AlignCenter)
         self.msg_box_label.setObjectName("msg_box")
         self.msg_box_label.setFixedHeight(40) # Adjust the message box label to a height of 40px
         self.msg_box_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed) # makes label resizable in width while keeping the height fixed
 
         # Weather labels
-        self.temp_label = QLabel("Temp", self)
+        self.temp_label = QLabel(self)
         self.temp_label.setAlignment(Qt.AlignCenter)
 
-        self.feels_like_label = QLabel("Temp Feel", self)
+        self.feels_like_label = QLabel(self)
         self.feels_like_label.setAlignment(Qt.AlignCenter)
 
-        self.desc_label = QLabel("Description", self) # Temp Description
+        self.desc_label = QLabel(self) # Temp Description
         self.desc_label.setAlignment(Qt.AlignCenter)
 
 
-        self.wind_label = QLabel("Wind", self)
+        self.wind_label = QLabel(self)
         self.wind_label.setAlignment(Qt.AlignCenter)
 
 
-        self.w_icon_label = QLabel("WEather Icon", self)
+        self.w_icon_label = QLabel(self)
         self.w_icon_label.setAlignment(Qt.AlignCenter)
 
-        self.sunrise_label = QLabel("Sunrise", self)
+        self.sunrise_label = QLabel(self)
         self.sunrise_label.setAlignment(Qt.AlignCenter)
 
-        self.sunset_label = QLabel("Sunset", self)
+        self.sunset_label = QLabel(self)
         self.sunset_label.setAlignment(Qt.AlignCenter)
 
 
-        self.humid_label = QLabel("Humdity", self)
+        self.humid_label = QLabel(self)
         self.humid_label.setAlignment(Qt.AlignCenter)
 
         # Buttons
@@ -203,6 +203,8 @@ class WeatherApp(QMainWindow):
         sunrise = self.convert_to_utc(data["sys"]["sunrise"])
         sunset = self.convert_to_utc(data["sys"]["sunset"])
 
+        self.is_day(sunrise, sunset)
+
         
         self.temp_label.setText(temp)
         self.feels_like_label.setText(temp_feel)
@@ -211,6 +213,14 @@ class WeatherApp(QMainWindow):
         self.wind_label.setText(f"Wind:\n{wind_speed} MPH\n from {wind_degree}")
         self.sunrise_label.setText(f"Sunrise:\n{sunrise}")
         self.sunset_label.setText(f"Sunset:\n{sunset}")
+
+    def is_day(self, sunrise, sunset):
+        now = datetime.now().strftime("%I:%M %p")
+        if sunrise <= now and now < sunset:
+            print("Day")
+        else:
+            print("Night")
+
 
     # Converts UNIX timestaps to UTC directly
     def convert_to_utc(self, timestamp):
