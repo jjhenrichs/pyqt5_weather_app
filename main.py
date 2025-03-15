@@ -36,14 +36,11 @@ class WeatherApp(QMainWindow):
 
         self.desc_label = QLabel(self) # Temp Description
         self.desc_label.setAlignment(Qt.AlignCenter)
-
-
-        self.wind_label = QLabel(self)
-        self.wind_label.setAlignment(Qt.AlignCenter)
-
+        self.desc_label.setObjectName("description")
 
         self.w_icon_label = QLabel(self)
         self.w_icon_label.setAlignment(Qt.AlignCenter)
+        self.w_icon_label.setObjectName("icon_label")
 
         self.sunrise_label = QLabel(self)
         self.sunrise_label.setAlignment(Qt.AlignCenter)
@@ -85,7 +82,13 @@ class WeatherApp(QMainWindow):
             #weather_label {
                 border: 2px solid black;
                 font-size: 20px;
-            }            
+            }
+            #description {
+                font-size: 35px;
+            }
+            #icon_label {
+                font-size: 120px;
+            }                           
         """)
 
         # Central Widget
@@ -98,13 +101,9 @@ class WeatherApp(QMainWindow):
         weather_layout = QGridLayout()
         button_layout = QHBoxLayout()
         temp_layout = QVBoxLayout()
-        sun_layout = QVBoxLayout()
 
         temp_layout.addWidget(self.temp_label)
         temp_layout.addWidget(self.feels_like_label)
-
-        sun_layout.addWidget(self.sunrise_label)
-        sun_layout.addWidget(self.sunset_label)
 
         general_layout.addLayout(textbox_layout)
         general_layout.addLayout(weather_layout)
@@ -116,13 +115,13 @@ class WeatherApp(QMainWindow):
         textbox_layout.addWidget(self.msg_box_label)
 
         # Weather Layout
-        weather_layout.addLayout(temp_layout, 0, 0)
-        weather_layout.addWidget(self.desc_label, 0, 1, 1, 2)
-        weather_layout.addWidget(self.humid_label, 0,3)
+        weather_layout.addLayout(temp_layout, 1, 0)
+        weather_layout.addWidget(self.desc_label, 0, 0, 1, 4)
+        weather_layout.addWidget(self.humid_label, 1,3)
 
         weather_layout.addWidget(self.w_icon_label, 1, 1, 2, 2)
-        weather_layout.addLayout(sun_layout, 2, 0)
-        weather_layout.addWidget(self.wind_label, 2, 3)
+        weather_layout.addWidget(self.sunrise_label, 2, 0)
+        weather_layout.addWidget(self.sunset_label, 2, 3)
 
         # Button Layout
         button_layout.addWidget(self.submit_btn)
@@ -161,7 +160,6 @@ class WeatherApp(QMainWindow):
             data = response.json()
 
             if response.status_code == 200:
-                print(data)
                 self.display_data(data)
 
         except requests.exceptions.HTTPError as http_error: # when status codes 400 - 599 are raised
@@ -195,45 +193,45 @@ class WeatherApp(QMainWindow):
 
     def display_data(self, data): 
         desc = data["weather"][0]["description"].capitalize()
-        temp = f"{int(data["main"]["temp"])}° F"
+        temp = f"Temp: {int(data["main"]["temp"])}° F"
         temp_feel = f"Feels like {int(data["main"]["feels_like"])}° F"
         humidity = f"Humidity:\n{data["main"]["humidity"]}%"
-        wind_speed = data["wind"]["speed"]
-        wind_degree = self.calc_wind_direction(data["wind"]["deg"]) 
         sunrise = self.convert_to_utc(data["sys"]["sunrise"])
         sunset = self.convert_to_utc(data["sys"]["sunset"])
         icon = self.get_icon(data["weather"][0]["id"], self.is_day(sunrise, sunset))
 
-        
-
-        
         self.temp_label.setText(temp)
         self.feels_like_label.setText(temp_feel)
         self.desc_label.setText(desc)
         self.humid_label.setText(humidity)
-        self.wind_label.setText(f"Wind:\n{wind_speed} MPH\n from {wind_degree}")
         self.sunrise_label.setText(f"Sunrise:\n{sunrise}")
         self.sunset_label.setText(f"Sunset:\n{sunset}")
         self.w_icon_label.setText(icon)
 
     def get_icon(self, id, is_daylight):
-        if 200 >= id <= 232:
-            return "⚡"
+        if 200 >= id <= 232:        # if id >= and id <= 232
+            return "🌩️"
         elif 300 >= id <= 321:
             return "🌦️"
-        elif 500 >= id < 505 or 520 >= id <= 531:
-            return "💧"
-        elif 600 >= id <= 622 or id == 511:
+        elif (id >= 500 and id < 505) or (id >= 520 and id < 531):
+            return "🌧️"
+        elif (id >= 600 and id <= 622) or id == 511:
             return "❄️"
         elif id > 700 and id <= 781:
             return "🌁"
+        elif id == 762:
+            return "🌋"
+        elif id == 771:
+            return "💨"
+        elif id == 781:
+            return "🌪️"
         elif id == 800 and is_daylight:
-                return "☀️"
+            return "☀️"
         elif id == 800 and not is_daylight:
-                return "🌕"
-        elif 802 == id == 801:
+            return "🌕"
+        elif id == 801:
             return "🌥️"
-        elif 803 == id == 804:
+        elif id >= 802 and id <= 804:
             return "☁️"
         
 
@@ -244,17 +242,9 @@ class WeatherApp(QMainWindow):
         else:
             return False
 
-
     # Converts UNIX timestaps to UTC directly
     def convert_to_utc(self, timestamp):
         return datetime.fromtimestamp(timestamp).strftime("%I:%M %p") # %I -> 12 hr format, %p -> AM/PM indicator
-
-    def calc_wind_direction(self, wind_deg):
-        directions = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE",
-                     "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW", "N"]
-        
-        index = round(wind_deg / 22.5) % 16  # 16 segments of (360 / 16) 22.5° each
-        return directions[index]
 
     def display_error(self, message):
         self.msg_box_label.setText(message)
