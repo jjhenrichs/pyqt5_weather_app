@@ -23,20 +23,17 @@ class WeatherApp(QMainWindow):
         # Labels
         self.msg_box_label = QLabel(self)
         self.msg_box_label.setAlignment(Qt.AlignCenter)
-        self.msg_box_label.setObjectName("msg_box")
         self.msg_box_label.setFixedHeight(40) # Adjust the message box label to a height of 40px
         self.msg_box_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed) # makes label resizable in width while keeping the height fixed
-
+        self.msg_box_label.setStyleSheet('color: red;'
+                                         'font-weight: 800;'
+                                         'font-size: 20px;')
         # Weather labels
         self.temp_label = QLabel(self)
         self.temp_label.setAlignment(Qt.AlignCenter)
 
         self.feels_like_label = QLabel(self)
         self.feels_like_label.setAlignment(Qt.AlignCenter)
-
-        self.desc_label = QLabel(self) # Temp Description
-        self.desc_label.setAlignment(Qt.AlignCenter)
-        self.desc_label.setObjectName("description")
 
         self.w_icon_label = QLabel(self)
         self.w_icon_label.setAlignment(Qt.AlignCenter)
@@ -72,19 +69,9 @@ class WeatherApp(QMainWindow):
             QPushButton {
                 font-size: 20px;               
             }
-                           
-            #msg_box {
-                color: red;
-                font-weight: 800;
-                font-size: 20px;
-                text-align: center; 
-            } 
             #weather_label {
                 border: 2px solid black;
                 font-size: 20px;
-            }
-            #description {
-                font-size: 35px;
             }
             #icon_label {
                 font-size: 120px;
@@ -115,9 +102,8 @@ class WeatherApp(QMainWindow):
         textbox_layout.addWidget(self.msg_box_label)
 
         # Weather Layout
-        weather_layout.addLayout(temp_layout, 1, 0)
-        weather_layout.addWidget(self.desc_label, 0, 0, 1, 4)
-        weather_layout.addWidget(self.humid_label, 1,3)
+        weather_layout.addLayout(temp_layout, 0, 0)
+        weather_layout.addWidget(self.humid_label, 0,3)
 
         weather_layout.addWidget(self.w_icon_label, 1, 1, 2, 2)
         weather_layout.addWidget(self.sunrise_label, 2, 0)
@@ -202,7 +188,10 @@ class WeatherApp(QMainWindow):
 
         self.temp_label.setText(temp)
         self.feels_like_label.setText(temp_feel)
-        self.desc_label.setText(desc)
+        self.msg_box_label.setStyleSheet('color: black;'
+                                         'font-weight: 400;'
+                                         'font-size: 35px;')
+        self.msg_box_label.setText(desc)
         self.humid_label.setText(humidity)
         self.sunrise_label.setText(f"Sunrise:\n{sunrise}")
         self.sunset_label.setText(f"Sunset:\n{sunset}")
@@ -255,6 +244,15 @@ class WeatherApp(QMainWindow):
         self.state_label.clear()
         self.country_label.clear()
         self.msg_box_label.clear()
+        self.msg_box_label.setStyleSheet('color: red;'
+                                         'font-weight: 800;'
+                                         'font-size: 20px;')
+        self.w_icon_label.clear()
+        self.sunrise_label.clear()
+        self.sunset_label.clear()
+        self.humid_label.clear()
+        self.temp_label.clear()
+        self.feels_like_label.clear()
         self.data = ""
         self.url = ""
         self.country = ""
