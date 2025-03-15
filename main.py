@@ -217,28 +217,24 @@ class WeatherApp(QMainWindow):
         self.w_icon_label.setText(icon)
 
     def get_icon(self, id, is_daylight):
-        if id >= 200 and id <= 232:
-            return "Thunder"
-        elif id >= 300 and id < 321:
-            return "Drizzle"
-        elif id >= 500 and id < 505:
-            return "Rain"
-        elif id == 511:
-            return "Freezing Rain"
-        elif id >= 520 and id <= 531:
-            return "Intense Rain"
-        elif id >= 600 and id <= 622:
-            return "Snow"
+        if 200 >= id <= 232:
+            return "⚡"
+        elif 300 >= id <= 321:
+            return "🌦️"
+        elif 500 >= id < 505 or 520 >= id <= 531:
+            return "💧"
+        elif 600 >= id <= 622 or id == 511:
+            return "❄️"
         elif id > 700 and id <= 781:
-            return "Fog"
-        elif id == 800:
-            return "Sun or Moon"
-        elif id == 801:
-            return "Few Clouds"
-        elif id == 802:
-            return "Scattered clouds"
-        elif id == 803 and id == 804:
-            return "Overcast Clouds"
+            return "🌁"
+        elif id == 800 and is_daylight:
+                return "☀️"
+        elif id == 800 and not is_daylight:
+                return "🌕"
+        elif 802 == id == 801:
+            return "🌥️"
+        elif 803 == id == 804:
+            return "☁️"
         
 
     def is_day(self, sunrise, sunset):
