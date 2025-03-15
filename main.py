@@ -3,7 +3,6 @@ from datetime import datetime
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QPushButton, QWidget, QVBoxLayout, QHBoxLayout, QGridLayout,QSizePolicy
 from PyQt5.QtCore import Qt
 
-
 class WeatherApp(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -44,7 +43,6 @@ class WeatherApp(QMainWindow):
 
         self.sunset_label = QLabel(self)
         self.sunset_label.setAlignment(Qt.AlignCenter)
-
 
         self.humid_label = QLabel(self)
         self.humid_label.setAlignment(Qt.AlignCenter)
@@ -104,7 +102,6 @@ class WeatherApp(QMainWindow):
         # Weather Layout
         weather_layout.addLayout(temp_layout, 0, 0)
         weather_layout.addWidget(self.humid_label, 0,3)
-
         weather_layout.addWidget(self.w_icon_label, 1, 1, 2, 2)
         weather_layout.addWidget(self.sunrise_label, 2, 0)
         weather_layout.addWidget(self.sunset_label, 2, 3)
@@ -198,9 +195,9 @@ class WeatherApp(QMainWindow):
         self.w_icon_label.setText(icon)
 
     def get_icon(self, id, is_daylight):
-        if 200 >= id <= 232:        # if id >= and id <= 232
+        if id >= 200 and id <= 232:       
             return "🌩️"
-        elif 300 >= id <= 321:
+        elif id >= 300 and id <= 321:
             return "🌦️"
         elif (id >= 500 and id < 505) or (id >= 520 and id < 531):
             return "🌧️"
@@ -222,7 +219,6 @@ class WeatherApp(QMainWindow):
             return "🌥️"
         elif id >= 802 and id <= 804:
             return "☁️"
-        
 
     def is_day(self, sunrise, sunset):
         now = datetime.now().strftime("%I:%M %p")
