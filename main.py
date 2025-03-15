@@ -202,8 +202,9 @@ class WeatherApp(QMainWindow):
         wind_degree = self.calc_wind_direction(data["wind"]["deg"]) 
         sunrise = self.convert_to_utc(data["sys"]["sunrise"])
         sunset = self.convert_to_utc(data["sys"]["sunset"])
+        icon = self.get_icon(data["weather"][0]["id"], self.is_day(sunrise, sunset))
 
-        self.is_day(sunrise, sunset)
+        
 
         
         self.temp_label.setText(temp)
@@ -213,13 +214,39 @@ class WeatherApp(QMainWindow):
         self.wind_label.setText(f"Wind:\n{wind_speed} MPH\n from {wind_degree}")
         self.sunrise_label.setText(f"Sunrise:\n{sunrise}")
         self.sunset_label.setText(f"Sunset:\n{sunset}")
+        self.w_icon_label.setText(icon)
+
+    def get_icon(self, id, is_daylight):
+        if id >= 200 and id <= 232:
+            return "Thunder"
+        elif id >= 300 and id < 321:
+            return "Drizzle"
+        elif id >= 500 and id < 505:
+            return "Rain"
+        elif id == 511:
+            return "Freezing Rain"
+        elif id >= 520 and id <= 531:
+            return "Intense Rain"
+        elif id >= 600 and id <= 622:
+            return "Snow"
+        elif id > 700 and id <= 781:
+            return "Fog"
+        elif id == 800:
+            return "Sun or Moon"
+        elif id == 801:
+            return "Few Clouds"
+        elif id == 802:
+            return "Scattered clouds"
+        elif id == 803 and id == 804:
+            return "Overcast Clouds"
+        
 
     def is_day(self, sunrise, sunset):
         now = datetime.now().strftime("%I:%M %p")
         if sunrise <= now and now < sunset:
-            print("Day")
+            return True
         else:
-            print("Night")
+            return False
 
 
     # Converts UNIX timestaps to UTC directly
